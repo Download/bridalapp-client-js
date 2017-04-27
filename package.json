@@ -1,18 +1,23 @@
 {
   "name": "bridalapp-client",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Javascript client for Bridal App API Server",
   "main": "src/index.js",
   "scripts": {
-    "build-umd": "rollup -c",
-    "build-min": "cross-env NODE_ENV=production rollup -c",
+    "flow": "flow",
+    "build-umd": "rollup -c -n bridalapp",
+    "build-min": "cross-env NODE_ENV=production rollup -c -n bridalapp",
     "build-umd-webpack": "webpack --output-path dist --output-filename bridalapp-client.umd.js --output-library-target umd \"./index.js\" ",
     "build-min-webpack": "webpack -p --output-path dist --output-filename bridalapp-client.min.js --output-library-target umd \"./index.js\" ",
     "build": "npm run build-umd && npm run build-min",
     "build-test": "webpack --output-path dist --output-filename bridalapp-client.spec.js \"./index.spec.js\" && mocha \"dist/index.spec.js\" ",
     "release": "npm run build && npm run build-test",
+    "prepublish": "npm run release",
     "test": "mocha --require test/test-helper.js \"src/**/*.spec.js\"",
-    "dev": "webpack-dev-server --output-path test --output-filename index.spec.js \"mocha-loader!./index.spec.js\" --content-base test --port 8888"
+    "dev-unittests": "webpack-dev-server --output-path test --output-filename index.spec.js \"mocha-loader!./index.spec.js\" --content-base test --port 8888",
+    "dev-integration": "webpack-dev-server --output-path test --output-filename integration.spec.js \"mocha-loader!./integration.spec.js\" --content-base test --port 8889",
+    "dev": "run-p dev-unittests dev-integration",
+    "dev-vscode": "node ./test/dev-server.js"
   },
   "repository": {
     "type": "git",
@@ -33,11 +38,14 @@
     "babel-plugin-external-helpers": "^6.22.0",
     "babel-polyfill": "^6.23.0",
     "babel-preset-es2015": "^6.24.0",
+    "babel-preset-flow": "^6.23.0",
     "babel-register": "^6.24.0",
     "chai": "^3.5.0",
     "cross-env": "^4.0.0",
+    "flow-bin": "^0.44.2",
     "mocha": "^3.2.0",
     "mocha-loader": "^1.1.1",
+    "npm-run-all": "^4.0.2",
     "rollup": "^0.41.6",
     "rollup-plugin-babel": "^2.7.1",
     "rollup-plugin-commonjs": "^8.0.2",
@@ -47,7 +55,8 @@
     "webpack-dev-server": "^2.4.2"
   },
   "dependencies": {
-    "mics": "^0.1.1",
+    "keycloak": "^1.2.0",
+    "mics": "^0.5.0",
     "seamless-immutable": "^7.1.2",
     "ulog": "^1.0.2"
   }

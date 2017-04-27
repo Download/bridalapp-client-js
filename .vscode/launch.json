@@ -1,0 +1,32 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+    {
+        "name": "Launch localhost",
+        "type": "chrome",
+        "request": "launch",
+        "sourceMaps": true,
+        "url": "http://localhost:8888/",
+        "webRoot": "${workspaceRoot}/test"
+    },        
+/*	    {
+                "name": "Debug",
+                "type": "chrome",
+                "request": "launch",
+                "webRoot": "${workspaceRoot}",
+                "url": "http://localhost:8888", 
+                "userDataDir": "${workspaceRoot}/.vscode/chrome",
+                "sourceMaps": true,
+                "preLaunchTask": "development",
+                "smartStep": true,
+                "internalConsoleOptions": "openOnSessionStart",
+                "skipFiles": [
+                    "node_modules/**"
+                ],
+                "sourceMapPathOverrides": {
+                    "webpack:///*": "${webRoot}/*"
+                }
+            }
+*/
+	]
+}

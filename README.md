@@ -16,47 +16,72 @@ npm install --save bridalapp-client
 ```
 
 ## Direct download
-* [bridalapp-client.umd.js](https://cdn.rawgit.com/download/bridalapp-client-js/0.0.1/bridalapp-client.umd.js)
-* [bridalapp-client.min.js](https://cdn.rawgit.com/download/bridalapp-client-js/1.0.2/bridalapp-client.min.js) (~2kB, minified)
+* [bridalapp-client.umd.js](https://cdn.rawgit.com/download/bridalapp-client-js/0.1.0/bridalapp-client.umd.js)
+* [bridalapp-client.min.js](https://cdn.rawgit.com/download/bridalapp-client-js/0.1.0/bridalapp-client.min.js) 
 
 
 ## Include in your app
 
 ### require
 ```js
-var client = require('bridalapp-client')
+var bridalapp = require('bridalapp-client').bridalapp
+// or, if you want to use a client with custom options
+var client = require('bridalapp-client').client
 ```
 
 ### import
 ```js
-import client from 'bridalapp-client'
+import { bridalapp } from 'bridalapp-client'
+// or, if you want to use a client with custom options
+import { client } from 'bridalapp-client'
 ```
 
 ### AMD
 ```js
-define(['bridalapp-client'], function(client){
-  // ...
+define(['bridalapp-client'], function(bridalappClient){
+  var bridalapp = bridalappClient.bridalapp
+  // Or, if you want to use a client with custom options
+  var client = bridalappClient.client
 });
 ```
 
 ### Script tag
 ```html
-<script src="https://cdn.rawgit.com/download/bridalapp-client-js/0.0.1/bridalapp-client.min.js"></script>
+<script src="https://cdn.rawgit.com/download/bridalapp-client-js/0.1.0/bridalapp-client.min.js"></script>
+<script>
+  var bridalapp = window['bridalapp-client'].bridalapp
+  // Or, if you want to use a client with custom options
+  var client = window['bridalapp-client'].client
+</script>
 ```
 
 ## Usage
-```js
-import client from 'bridalapp-client'
+The easiest way is to grab the default client, `bridalapp`, that has the default options applied. Then
+make API calls on it:
 
-// options are optional
+```js
+import { bridalapp, Category } from 'bridalapp-client'
+
+var onSale = bridalapp.products.search(Category.WEDDING_DRESSES, 'sale', 100, 0)
+```
+
+If you want to set custom options, use `client`:
+
+```
+// all options are optional
 var options = {
   // fetch: myFetchFunction,
   // log: myLoggerObject
 }
 
-var bridalapp = client(options)
-```
+var myClient = client(options)
 
+var onSale = myClient.products.search(Category.WEDDING_DRESSES, 'sale', 100, 0)
+```
+The objects returned by `client` are stateless and should be treated as immutable.
+
+## Options
+These options can be specified when
 ## Issues
 Add an issue in this project's [issue tracker](https://github.com/download/bridalapp-client-js/issues)
 to let me know of any problems you find, or questions you may have.

@@ -1,18 +1,8 @@
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? factory() :
+	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
 	typeof define === 'function' && define.amd ? define(factory) :
-	(factory());
+	(global['bridalapp-client'] = factory());
 }(this, (function () { 'use strict';
-
-function sayHelloTo(name) {
-  return "Hello, " + name + "!";
-}
-
-function addArray(numbers) {
-	return numbers.reduce(function (a, b) {
-		return a + b;
-	}, 0);
-}
 
 // ulog - microscopically small universal logging library
 // © 2016 by Stijn de Witt, some rights reserved
@@ -138,32 +128,189 @@ ulog$2.level = lvl || ulog$2.WARN;
 
 var browser$1 = ulog;
 
-// Import a couple modules for testing.
-// Import a logger for easier debugging.
-var log = browser$1('app:log');
+var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-// The logger should only be enabled if we’re not in production.
-if (ENV !== 'production') {
-  // Enable the logger.
-  browser$1.enable('*');
-  log.log('Logging is enabled!');
+var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
+	return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+} : function (obj) {
+	return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
+};
 
-  // Enable LiveReload
-  //  document.write(
-  //    '<script src="http://' + (location.host || 'localhost').split(':')[0] +
-  //    ':35729/livereload.js?snipver=1"></' + 'script>'
-  //  );
-} else {
-  browser$1.disable();
+function _possibleConstructorReturn$1(self, call) {
+	if (!self) {
+		throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	}return call && ((typeof call === "undefined" ? "undefined" : _typeof2(call)) === "object" || typeof call === "function") ? call : self;
 }
 
-// Run some functions from our imported modules.
-var result1 = sayHelloTo('Jason');
-var result2 = addArray([1, 2, 3, 4]);
+function _inherits$1(subClass, superClass) {
+	if (typeof superClass !== "function" && superClass !== null) {
+		throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof2(superClass)));
+	}subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+}
 
-// Print the results on the page.
-log.info('sayHelloTo(\'Jason\') => ' + result1 + '\n\n');
-log.info('addArray([1, 2, 3, 4]) => ' + result2);
+function _classCallCheck$1(instance, Constructor) {
+	if (!(instance instanceof Constructor)) {
+		throw new TypeError("Cannot call a class as a function");
+	}
+}
+
+var baseclass = function Object() {
+	_classCallCheck$1(this, Object);
+};
+var derive = function derive(superclass) {
+	return {}[superclass.name || 'Object'] = function (_superclass) {
+		_inherits$1(_class, _superclass);
+
+		function _class() {
+			_classCallCheck$1(this, _class);
+
+			return _possibleConstructorReturn$1(this, (_class.__proto__ || Object.getPrototypeOf(_class)).apply(this, arguments));
+		}
+
+		return _class;
+	}(superclass);
+};
+
+function mix() {
+	for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+		args[_key] = arguments[_key];
+	}
+
+	var superclass = !is(args[0]).a('factory') && args.shift() || baseclass;
+	var factory = is(args[args.length - 1]).a('factory') && args.pop() || derive;
+	if (!is(superclass, 'mix')) {
+		superclass = derive(superclass);
+		Object.defineProperties(superclass, {
+			interface: { value: getInterface(superclass.prototype), writable: false }
+		});
+	}
+	if (args.length) factory = function (org) {
+		return function (superclass) {
+			return org(args.reduce(function (s, m) {
+				return m.mixin(s);
+			}, superclass));
+		};
+	}(factory);
+	function mixin(superclass) {
+		var result = is(superclass).a(mixin) ? superclass : factory(superclass);
+		if (mixin.classes.indexOf(result) == -1) mixin.classes.push(result);
+		return result;
+	}
+	Object.defineProperties(mixin, {
+		classes: { value: [], writable: false },
+		mixins: { value: args, writable: false }
+	});
+	var constructor = mixin(superclass);
+	return Object.defineProperties(constructor, {
+		mixin: { value: mixin, writable: false },
+		interface: { get: function (x) {
+				return function () {
+					return x ? x : x = getInterface(constructor.prototype);
+				};
+			}() }
+	});
+}
+
+function is(x, type) {
+	function a(type) {
+		if (typeof type == 'string') {
+			return type == 'mixin' ? typeof x == 'function' && !!x.mixin : type == 'mix' ? typeof x == 'function' && !!x.interface : type == 'factory' ? typeof x == 'function' && x.length == 1 && !x.interface : (typeof x === 'undefined' ? 'undefined' : _typeof(x)) == type;
+		}
+		if ((typeof x === 'undefined' ? 'undefined' : _typeof(x)) == 'object') {
+			if (x instanceof type) return true;
+			if (type.classes) return type.classes.reduce(function (f, c) {
+				return f || a(c);
+			}, false);
+		} else if (typeof x == 'function') {
+			if (x.mixin && x.mixin.mixins.indexOf(type) !== -1) return true;
+			var c = x;
+			while (c !== Object) {
+				if (c === type || c === type.class) return true;
+				if (type.mixin && type.mixin.classes && type.mixin.classes.indexOf(c) !== -1) return true;
+				c = c.prototype.__proto__.constructor;
+			}
+		}
+		return false;
+	}
+
+	function as(type) {
+		if (a(type)) return true;
+		var itf = type.interface || is(type, 'function') && getInterface(type.prototype);
+		var subject = is(x, 'function') ? x.interface || getInterface(x.prototype) : x;
+		return itf && Object.keys(itf).reduce(function (f, k) {
+			return f && (is(itf[k], 'function') ? is(subject[k], 'function') : k in subject);
+		}, true);
+	}
+
+	var str = x && x.toString() || '';
+	return type !== undefined ? a(type) : { a: a, an: a, as: as };
+}
+
+function getPropertyNames(proto) {
+	var results = [];
+	while (proto !== Object.prototype) {
+		Object.getOwnPropertyNames(proto).reduce(function (arr, k) {
+			return arr.indexOf(k) === -1 ? arr.push(k) && arr : arr;
+		}, results);
+		proto = proto.__proto__.constructor.prototype;
+	}
+	return results;
+}
+
+function getInterface(proto) {
+	return getPropertyNames(proto).reduce(function (o, k) {
+		o[k] = proto[k];return o;
+	}, {});
+}
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var log$3 = browser$1('bridalapp-client:BridalappClient');
+log$3.log(log$3.name);
+
+var BridalappClient = mix(function (superclass) {
+	return function (_superclass) {
+		_inherits(BridalappClient, _superclass);
+
+		function BridalappClient() {
+			var _ref;
+
+			_classCallCheck(this, BridalappClient);
+
+			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+				args[_key] = arguments[_key];
+			}
+
+			var _this = _possibleConstructorReturn(this, (_ref = BridalappClient.__proto__ || Object.getPrototypeOf(BridalappClient)).call.apply(_ref, [this].concat(args)));
+
+			var options = args.length && args[0];
+			Object.defineProperties(_this, {
+				options: { get: function get() {
+						return options;
+					}, enumerable: true }
+			});
+			return _this;
+		}
+
+		return BridalappClient;
+	}(superclass);
+});
+
+var log = browser$1('bridalapp-client');
+
+function client(options) {
+	if (!options) options = client.DEFAULT_OPTIONS;
+	return client.clients[options] || (client.clients[options] = new BridalappClient(options));
+}
+
+client.DEFAULT_OPTIONS = {};
+client.clients = {};
+
+return client;
 
 })));
 //# sourceMappingURL=bridalapp-client.umd.js.map
